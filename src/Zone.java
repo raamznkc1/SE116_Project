@@ -1,4 +1,5 @@
 public abstract class Zone extends Cell {
+
     protected int level;
     protected int currentOutput;
     protected int receivedElectricity;
@@ -27,6 +28,7 @@ public abstract class Zone extends Cell {
         this.receivedLifestyle = 0;
         this.utilityDemand = 1;
     }
+
     public int getLevel() {
         return level;
     }
@@ -74,6 +76,7 @@ public abstract class Zone extends Cell {
     public boolean getHasEducation() {
         return hasEducation;
     }
+
     public void setLevel(int level) {
         this.level = level;
     }
@@ -131,18 +134,35 @@ public abstract class Zone extends Cell {
         return true;
     }
 
+    public void levelUp() {
+        if (level < 3) {
+            level++;
+        }
+    }
 
+    public void levelDown() {
+        if (level > 0) {
+            level--;
+        }
+    }
 
+    public void dropToZero() {
+        level = 0;
+    }
 
+    public void resetReceivedValues() {
+        receivedElectricity = 0;
+        receivedWater = 0;
+        receivedInternet = 0;
+        hasSecurity = false;
+        hasHealth = false;
+        hasEducation = false;
+        receivedPopulation = 0;
+        receivedGoods = 0;
+        receivedLifestyle = 0;
+    }
 
-
-
-
-
-
-
-
-
-
-
+    public void updateDemand() {
+        utilityDemand = Math.max(1, currentOutput);
+    }
 }
