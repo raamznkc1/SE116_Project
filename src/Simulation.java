@@ -5,9 +5,9 @@ public class Simulation {
     //Pools
     private int totalPopulationPool = 0;
     private int totalGoodsPool = 0;
-    private int totalLifeStylePool = 0;
+    private int totalLifestylePool = 0;
 
-    public Simulation(Cell[][] grid, int currentTick){
+    public Simulation(Cell[][] grid){
         this.grid = grid;
         this.currentTick = 0;
     }
