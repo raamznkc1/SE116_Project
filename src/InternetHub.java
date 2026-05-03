@@ -1,6 +1,6 @@
 public class InternetHub extends UtilityProvider{
 
-    public InternetHub(int row, int col,String utilityType){
+    public InternetHub(int row, int col){
         super(row,col,"Internet");
     }
 
