@@ -1,0 +1,10 @@
+[33m753f745[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m implemented task1- UtilityProvider and it's subclasses PowerPlant, WaterStation and InternetHub.
+[33mbf0119d[m Merge pull request #1 from raamznkc1/emre-task1
+[33mcca4d8e[m Emre-Task1 Implemented UtilityProvider class and it's 3 subclasses.
+[33mc4954eb[m Update Zone class and add HousingZone class.
+[33md3267fa[m Add abstract Zone class with fields,getters,setters and abstract methods
+[33m565c4e2[m Implemented Grid and MapReader classes for map file parsing.
+[33m548df05[m github control
+[33m82e8759[m Implemented EmptyCell and RoadCell classes extending abstract Cell
+[33m735a2c2[m Created abstract Cell class with position fields and abstract methods
+[33md6cd55b[m Project initialization
