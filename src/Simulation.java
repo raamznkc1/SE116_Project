@@ -1,5 +1,5 @@
 public class Simulation {
-    private Cell[][] grid;
+    private Grid grid;
     private int currentTick;
 
     //Pools
@@ -7,10 +7,16 @@ public class Simulation {
     private int totalGoodsPool = 0;
     private int totalLifestylePool = 0;
 
-    public Simulation(Cell[][] grid){
+    public Simulation(Grid grid){
         this.grid = grid;
         this.currentTick = 0;
     }
+    public void run(int totalTicks) {
+        for (int i = 0; i < totalTicks; i++) {
+            runTick();
+        }
+    }
+
 
     public void runTick(){
         System.out.println("Tick " + currentTick);
@@ -27,6 +33,8 @@ public class Simulation {
         collectProduction();
         currentTick++;
     }
+    private void provideServices() {
+    }
 
     private void collectProduction() {
     }
@@ -38,8 +46,5 @@ public class Simulation {
     }
 
     private void distributeUtilities() {
-    }
-
-    private void provideServices() {
     }
 }
