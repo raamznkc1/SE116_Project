@@ -37,13 +37,41 @@ public class IndustrialZone extends Zone{
 
         if (targetLevel > level) {
             levelUp();
-        } else if (targetLevel < level) {
+        }
+        else if (targetLevel < level) {
             levelDown();
         }
     }
     @Override
     public void computeOutput(){
+        if (level == 0) {
+            currentOutput = 0;
+            updateDemand();
+            return;
+        }
+
+        int m = Math.min(receivedElectricity, receivedWater);
+
+        if (level == 1) {
+            currentOutput = m;
+        }
+        else if (level == 2) {
+            currentOutput = 2 * m;
+        }
+        else if (level == 3) {
+            currentOutput = 2 * m + receivedPopulation;
+        }
+
+        updateDemand();
     }
+
+    public int getProducedGoods() {
+        return currentOutput;
+
+    }
+
+
+
 
 
 }
