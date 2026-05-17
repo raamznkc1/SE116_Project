@@ -34,6 +34,11 @@ public class MapReader {
         switch (token) {
             case "E": return new EmptyCell(row, col);
             case "R": return new RoadCell(row, col);
+            case "H": return new HousingZone(row, col);
+            case "Z": return new IndustrialZone(row, col);
+            case "P": return new PowerPlant(row, col);
+            case "W": return new WaterStation(row, col);
+            case "T": return new InternetHub(row, col);
             default: throw new IllegalArgumentException(
                     "Unknowwn cell typ: " + token + " at (" + row + "," + col + ")"
             );
