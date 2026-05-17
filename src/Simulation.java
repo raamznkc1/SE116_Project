@@ -33,7 +33,42 @@ public class Simulation {
         collectProduction();
         currentTick++;
     }
+
+    private void resetAllZoneValues() {
+        for (int r = 0; r < grid.getRows(); r++) {
+            for (int c = 0; c < grid.getCols(); c++) {
+                Cell cell = grid.getCell(r, c);
+
+                if (cell instanceof Zone) {
+                    Zone zone = (Zone) cell;
+                    zone.resetReceivedValues();
+                }
+            }
+        }
+    }
     private void provideServices() {
+         resetAllZoneValues();
+
+        for (int r = 0; r < grid.getRows(); r++) {
+            for (int c = 0; c < grid.getCols(); c++) {
+                Cell cell = grid.getCell(r, c);
+
+                if (cell != null) {
+                    String type = cell.getType();
+
+                    if (type.equals("F")) {
+                        bfsSpreadService(r, c, type, 5);
+                    } else if (type.equals("D")) {
+                        bfsSpreadService(r, c, type, 3);
+                    } else if (type.equals("S")) {
+                        bfsSpreadService(r, c, type, 4);
+                    }
+                }
+            }
+        }
+    }
+
+    private void bfsSpreadService(int startRow, int startCol, String type, int maxRange) {
     }
 
     private void collectProduction() {
