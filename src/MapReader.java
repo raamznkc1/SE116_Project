@@ -40,7 +40,7 @@ public class MapReader {
             case "W": return new WaterStation(row, col);
             case "T": return new InternetHub(row, col);
             default: throw new IllegalArgumentException(
-                    "Unknowwn cell typ: " + token + " at (" + row + "," + col + ")"
+                    "Unknown cell type: " + token + " at (" + row + "," + col + ")"
             );
         }
     }
