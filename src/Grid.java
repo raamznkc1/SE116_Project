@@ -26,6 +26,10 @@ public class Grid {
         return cols;
     }
 
+    public boolean isValidPosition(int row, int col) {
+        return row >= 0 && row < this.rows && col >= 0 && col < this.cols;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
