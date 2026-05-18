@@ -23,7 +23,7 @@ public class Grid {
     }
 
     public int getCols() {
-        return rows;
+        return cols;
     }
 
     @Override
@@ -40,6 +40,7 @@ public class Grid {
                     sb.append(" ");
                 }
             }
+            sb.append("\n");
         }
         return sb.toString();
     }
