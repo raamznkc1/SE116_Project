@@ -24,7 +24,6 @@ public class Simulation {
         provideServices();
         distributeUtilities();
 
-        //Resource Distribution
         if (currentTick > 0) {
             distributeResources();
         }
@@ -159,6 +158,30 @@ public class Simulation {
     }
 
     private void collectProduction() {
+
+        totalPopulationPool = 0;
+        totalGoodsPool = 0;
+        totalLifestylePool = 0;
+
+        for (int r = 0; r < grid.getRows(); r++) {
+            for (int c = 0; c < grid.getCols(); c++) {
+                Cell cell = grid.getCell(r, c);
+
+                if (cell instanceof Zone) {
+                    Zone zone = (Zone) cell;
+                    zone.computeOutput();
+                    int output = zone.getCurrentOutput();
+
+                    if (zone instanceof HousingZone) {
+                        totalPopulationPool += output;
+                    } else if (zone instanceof IndustrialZone) {
+                        totalGoodsPool += output;
+                    } else if (zone instanceof CommercialZone) {
+                        totalLifestylePool += output;
+                    }
+                }
+            }
+        }
     }
 
     private void updateZones() {
