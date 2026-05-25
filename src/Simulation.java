@@ -11,6 +11,7 @@ public class Simulation {
         this.grid = grid;
         this.currentTick = 0;
     }
+
     public void run(int totalTicks) {
         for (int i = 0; i < totalTicks; i++) {
             runTick();
@@ -23,10 +24,7 @@ public class Simulation {
 
         provideServices();
         distributeUtilities();
-
-        if (currentTick > 0) {
-            distributeResources();
-        }
+        distributeResources();
 
         updateZones();
         collectProduction();
@@ -185,8 +183,61 @@ public class Simulation {
     }
 
     private void updateZones() {
+
+        for (int r = 0; r < grid.getRows(); r++) {
+            for (int c = 0; c < grid.getCols(); c++) {
+                Cell cell = grid.getCell(r, c);
+
+                if (cell instanceof Zone) {
+                    Zone zone = (Zone) cell;
+                    zone.computeNewLevel();
+                }
+            }
+        }
     }
 
     private void distributeResources() {
+
+        int housingCount = 0;
+        int commercialCount = 0;
+        int industrialCount = 0;
+
+
+        for (int r = 0; r < grid.getRows(); r++) {
+            for (int c = 0; c < grid.getCols(); c++) {
+                Cell cell = grid.getCell(r, c);
+                if (cell instanceof HousingZone) housingCount++;
+                if (cell instanceof CommercialZone) commercialCount++;
+                if (cell instanceof IndustrialZone) industrialCount++;
+            }
+        }
+
+        int populationTargets = industrialCount + commercialCount;
+        int popPerZone = (populationTargets > 0) ? (totalPopulationPool / populationTargets) : 0;
+
+        int goodsTargets = housingCount + commercialCount;
+        int goodsPerZone = (goodsTargets > 0) ? (totalGoodsPool / goodsTargets) : 0;
+
+        int lifestylePerZone = (housingCount > 0) ? (totalLifestylePool / housingCount) : 0;
+
+        for (int r = 0; r < grid.getRows(); r++) {
+            for (int c = 0; c < grid.getCols(); c++) {
+                Cell cell = grid.getCell(r, c);
+
+                    if (cell instanceof Zone) {
+                        Zone zone = (Zone) cell;
+
+                    if (zone instanceof HousingZone) {
+                        zone.setReceivedGoods(goodsPerZone);
+                        zone.setReceivedLifestyle(lifestylePerZone);
+                    } else if (zone instanceof IndustrialZone) {
+                        zone.setReceivedPopulation(popPerZone);
+                    } else if (zone instanceof CommercialZone) {
+                        zone.setReceivedPopulation(popPerZone);
+                        zone.setReceivedGoods(goodsPerZone);
+                    }
+                }
+            }
+        }
     }
 }
