@@ -15,4 +15,6 @@ public abstract class  UtilityProvider extends Cell {
     public String getUtilityType() {
         return utilityType;
     }
+
+    public abstract void applyUtility(Zone zone, int amount);
 }
