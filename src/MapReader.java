@@ -35,10 +35,14 @@ public class MapReader {
             case "E": return new EmptyCell(row, col);
             case "R": return new RoadCell(row, col);
             case "H": return new HousingZone(row, col);
-            case "Z": return new IndustrialZone(row, col);
+            case "I": return new IndustrialZone(row, col);
+            case "C": return new CommercialZone(row, col);
             case "P": return new PowerPlant(row, col);
             case "W": return new WaterStation(row, col);
             case "T": return new InternetHub(row, col);
+            case "F": return new PoliceStation(row, col, 5);
+            case "D": return new Hospital(row, col, 3);
+            case "S": return new School(row, col, 4);
             default: throw new IllegalArgumentException(
                     "Unknown cell type: " + token + " at (" + row + "," + col + ")"
             );
