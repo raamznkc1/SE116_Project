@@ -18,5 +18,13 @@ public class WaterStation extends UtilityProvider{
     public String toString() {
         return "W";
     }
+
+    @Override
+    public void applyUtility(Zone zone, int amount) {
+        zone.setReceivedWater(zone.getReceivedWater()+amount);
+    }
+
+
+
 }
 

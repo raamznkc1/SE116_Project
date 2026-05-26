@@ -18,4 +18,10 @@ public class PowerPlant extends UtilityProvider{
     public String toString() {
         return "P";
     }
+
+    @Override
+    public void applyUtility(Zone zone, int amount) {
+        zone.setReceivedElectricity(zone.getReceivedElectricity()+amount);
+
+    }
 }

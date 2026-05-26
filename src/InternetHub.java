@@ -18,4 +18,10 @@ public class InternetHub extends UtilityProvider{
     public String toString() {
         return "T";
     }
+
+    @Override
+    public void applyUtility(Zone zone, int amount) {
+        zone.setReceivedInternet(zone.getReceivedInternet()+amount);
+
+    }
 }
