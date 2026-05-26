@@ -4,6 +4,19 @@ import java.util.Queue;
     public class UtilityDistributor {
 
         public void distribute(Grid grid, UtilityProvider provider) {
+
+            for (int row = 0; row < grid.getRows(); row++) {
+                for (int col = 0; col < grid.getCols(); col++) {
+
+                    Cell cell = grid.getCell(row, col);
+
+                    if (cell instanceof Zone) {
+                        Zone zone = (Zone) cell;
+                        zone.updateDemand();
+                    }
+                }
+            }
+
             boolean[][] visited = new boolean[grid.getRows()][grid.getCols()];
             Queue<int[]> queue = new LinkedList<>();
 
