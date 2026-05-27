@@ -138,6 +138,10 @@ public class Simulation {
                                 zone.setReceivedElectricity(demand);
                                 remainingCapacity -= demand;
                             }
+                            if(utilityType.equals("Internet") && zone.getReceivedInternet() < demand){
+                                zone.setReceivedInternet(demand);
+                                remainingCapacity -= demand;
+                            }
                             else if (utilityType.equals("Water") && zone.getReceivedWater() < demand) {
                                 zone.setReceivedWater(demand);
                                 remainingCapacity -= demand;
