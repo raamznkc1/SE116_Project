@@ -59,7 +59,7 @@ import java.util.Queue;
 
                                     String zoneName = (zone instanceof HousingZone) ? "House" :
                                             (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
-                                    System.out.println(zoneName + " at (" + nextRow + "," + nextCol + ") received " + delivered + " " + utilityType.toLowerCase());
+                                    System.out.println(zoneName + " at (" + nextRow + "," + nextCol + ") received " + delivered + " " + utilityType.toLowerCase(java.util.Locale.ENGLISH));
                                 }
                             }
                             queue.add(new int[]{nextRow, nextCol});
