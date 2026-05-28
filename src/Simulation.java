@@ -7,9 +7,9 @@ public class Simulation {
     private int totalGoodsPool = 0;
     private int totalLifestylePool = 0;
 
-    public Simulation(Grid grid){
+    public Simulation(Grid grid) {
         this.grid = grid;
-        this.currentTick = 0;
+        this.currentTick = 1;
     }
 
     public void run(int totalTicks) {
@@ -19,12 +19,15 @@ public class Simulation {
     }
 
 
-    public void runTick(){
+    public void runTick() {
         System.out.println("Tick " + currentTick);
 
         provideServices();
         distributeUtilities();
-        distributeResources();
+
+        if (currentTick > 1) {
+            distributeResources();
+        }
 
         updateZones();
         collectProduction();
@@ -43,8 +46,9 @@ public class Simulation {
             }
         }
     }
+
     private void provideServices() {
-         resetAllZoneValues();
+        resetAllZoneValues();
 
         for (int r = 0; r < grid.getRows(); r++) {
             for (int c = 0; c < grid.getCols(); c++) {
@@ -76,12 +80,27 @@ public class Simulation {
                     int distance = Math.abs(startRow - r) + Math.abs(startCol - c);
 
                     if (distance <= maxRange) {
+
+                        String zoneName = (zone instanceof HousingZone) ? "House" :
+                                (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+
                         if (type.equals("F")) {
-                            zone.setHasSecurity(true);
+                            if (!zone.getHasSecurity()) {
+                                zone.setHasSecurity(true);
+                                System.out.println(zoneName + " at (" + r + "," + c + ") received security service");
+                            }
+
                         } else if (type.equals("D")) {
-                            zone.setHasHealth(true);
+                            if (!zone.getHasHealth()) {
+                                zone.setHasHealth(true);
+                                System.out.println(zoneName + " at (" + r + "," + c + ") received health service");
+                            }
+
                         } else if (type.equals("S")) {
-                            zone.setHasEducation(true);
+                            if (!zone.getHasEducation()) {
+                                zone.setHasEducation(true);
+                                System.out.println(zoneName + " at (" + r + "," + c + ") received education service");
+                            }
                         }
                     }
                 }
@@ -90,70 +109,13 @@ public class Simulation {
     }
 
     private void distributeUtilities() {
+        UtilityDistributor distributor = new UtilityDistributor();
+
         for (int r = 0; r < grid.getRows(); r++) {
             for (int c = 0; c < grid.getCols(); c++) {
                 Cell cell = grid.getCell(r, c);
-                if (cell != null) {
-                    if (cell.getType().equals("P")) {
-                        bfsSpreadUtility(r, c, "Electricity", 100);
-                    } else if (cell.getType().equals("W")) {
-                        bfsSpreadUtility(r, c, "Water", 100);
-                    }
-                }
-            }
-        }
-    }
-
-    private void bfsSpreadUtility(int startRow, int startCol, String utilityType, int initialCapacity) {
-        int rows = grid.getRows();
-        int cols = grid.getCols();
-
-        boolean[][] visited = new boolean[rows][cols];
-
-        java.util.Queue<int[]> queue = new java.util.LinkedList<>();
-        queue.add(new int[]{startRow, startCol});
-        visited[startRow][startCol] = true;
-
-        int remainingCapacity = initialCapacity;
-        int[][] directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
-
-        while (!queue.isEmpty() && remainingCapacity > 0) {
-            int[] current = queue.poll();
-            int currRow = current[0];
-            int currCol = current[1];
-
-            for (int[] dir : directions) {
-                int nextRow = currRow + dir[0];
-                int nextCol = currCol + dir[1];
-
-                if (grid.isValidPosition(nextRow, nextCol) && !visited[nextRow][nextCol]) {
-                    Cell neighbor = grid.getCell(nextRow, nextCol);
-
-                    if (neighbor != null) {
-                        if (neighbor instanceof Zone) {
-                            Zone zone = (Zone) neighbor;
-                            int demand = zone.getUtilityDemand();
-
-                            if (utilityType.equals("Electricity") && zone.getReceivedElectricity() < demand) {
-                                zone.setReceivedElectricity(demand);
-                                remainingCapacity -= demand;
-                            }
-                            if(utilityType.equals("Internet") && zone.getReceivedInternet() < demand){
-                                zone.setReceivedInternet(demand);
-                                remainingCapacity -= demand;
-                            }
-                            else if (utilityType.equals("Water") && zone.getReceivedWater() < demand) {
-                                zone.setReceivedWater(demand);
-                                remainingCapacity -= demand;
-                            }
-                            visited[nextRow][nextCol] = true;
-                        }
-
-                        else if (neighbor.isConnectable()) {
-                            visited[nextRow][nextCol] = true;
-                            queue.add(new int[]{nextRow, nextCol});
-                        }
-                    }
+                if (cell instanceof UtilityProvider) {
+                    distributor.distribute(grid, (UtilityProvider) cell);
                 }
             }
         }
@@ -174,12 +136,17 @@ public class Simulation {
                     zone.computeOutput();
                     int output = zone.getCurrentOutput();
 
-                    if (zone instanceof HousingZone) {
-                        totalPopulationPool += output;
-                    } else if (zone instanceof IndustrialZone) {
-                        totalGoodsPool += output;
-                    } else if (zone instanceof CommercialZone) {
-                        totalLifestylePool += output;
+                    if(output > 0){
+                        if (zone instanceof HousingZone) {
+                            totalPopulationPool += output;
+                            System.out.println("House at (" + r + "," + c + ") generated " + output + " population");
+                        } else if (zone instanceof IndustrialZone) {
+                            totalGoodsPool += output;
+                            System.out.println("Industrial at (" + r + "," + c + ") generated " + output + " goods");
+                        } else if (zone instanceof CommercialZone) {
+                            totalLifestylePool += output;
+                            System.out.println("Commercial at (" + r + "," + c + ") generated " + output + " lifestyle");
+                        }
                     }
                 }
             }
@@ -194,7 +161,20 @@ public class Simulation {
 
                 if (cell instanceof Zone) {
                     Zone zone = (Zone) cell;
+                    int oldLevel = zone.getLevel();
                     zone.computeNewLevel();
+
+                    int newLevel = zone.getLevel();
+                    if(newLevel > oldLevel){
+                        String zoneName = (zone instanceof  HousingZone) ? "House":
+                                (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+                        System.out.println(zoneName + " at (" + r + "," + c + ") levels up from " + oldLevel + " to " + newLevel);
+
+                    } else if (newLevel < oldLevel) {
+                        String zoneName = (zone instanceof HousingZone) ? "House" :
+                                (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+                        System.out.println(zoneName + " at (" + r + "," + c + ") levels down from " + oldLevel + " to " + newLevel);
+                    }
                 }
             }
         }
@@ -219,7 +199,7 @@ public class Simulation {
         int populationTargets = industrialCount + commercialCount;
         int popPerZone = (populationTargets > 0) ? (totalPopulationPool / populationTargets) : 0;
 
-        int goodsTargets = housingCount + commercialCount;
+        int goodsTargets = commercialCount;
         int goodsPerZone = (goodsTargets > 0) ? (totalGoodsPool / goodsTargets) : 0;
 
         int lifestylePerZone = (housingCount > 0) ? (totalLifestylePool / housingCount) : 0;
@@ -228,17 +208,30 @@ public class Simulation {
             for (int c = 0; c < grid.getCols(); c++) {
                 Cell cell = grid.getCell(r, c);
 
-                    if (cell instanceof Zone) {
-                        Zone zone = (Zone) cell;
+                if (cell instanceof Zone) {
+                    Zone zone = (Zone) cell;
 
                     if (zone instanceof HousingZone) {
-                        zone.setReceivedGoods(goodsPerZone);
                         zone.setReceivedLifestyle(lifestylePerZone);
+                        if (lifestylePerZone > 0) {
+                            System.out.println("House at (" + r + "," + c + ") received " + lifestylePerZone + " lifestyle");
+                        }
+
                     } else if (zone instanceof IndustrialZone) {
                         zone.setReceivedPopulation(popPerZone);
+                        if (popPerZone > 0) {
+                            System.out.println("Industrial at (" + r + "," + c + ") received " + popPerZone + " population");
+                        }
+
                     } else if (zone instanceof CommercialZone) {
                         zone.setReceivedPopulation(popPerZone);
                         zone.setReceivedGoods(goodsPerZone);
+                        if (popPerZone > 0) {
+                            System.out.println("Commercial at (" + r + "," + c + ") received " + popPerZone + " population");
+                        }
+                        if (goodsPerZone > 0) {
+                            System.out.println("Commercial at (" + r + "," + c + ") received " + goodsPerZone + " goods");
+                        }
                     }
                 }
             }
