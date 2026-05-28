@@ -7,6 +7,11 @@ public class Simulation {
     private int totalGoodsPool = 0;
     private int totalLifestylePool = 0;
 
+    // Lambda
+    private final java.util.function.Function<Zone, String> getZoneName = zone ->
+            (zone instanceof HousingZone) ? "House" :
+                    (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+
     public Simulation(Grid grid) {
         this.grid = grid;
         this.currentTick = 1;
@@ -29,8 +34,8 @@ public class Simulation {
             distributeResources();
         }
 
-        updateZones();
         collectProduction();
+        updateZones();
         currentTick++;
     }
 
@@ -81,8 +86,7 @@ public class Simulation {
 
                     if (distance <= maxRange) {
 
-                        String zoneName = (zone instanceof HousingZone) ? "House" :
-                                (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+                        String zoneName = getZoneName.apply(zone);
 
                         if (type.equals("F")) {
                             if (!zone.getHasSecurity()) {
@@ -164,13 +168,11 @@ public class Simulation {
 
                     int newLevel = zone.getLevel();
                     if(newLevel > oldLevel){
-                        String zoneName = (zone instanceof  HousingZone) ? "House":
-                                (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+                        String zoneName = getZoneName.apply(zone);
                         System.out.println(zoneName + " at (" + r + "," + c + ") levels up from " + oldLevel + " to " + newLevel);
 
                     } else if (newLevel < oldLevel) {
-                        String zoneName = (zone instanceof HousingZone) ? "House" :
-                                (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+                        String zoneName = getZoneName.apply(zone);
                         System.out.println(zoneName + " at (" + r + "," + c + ") levels down from " + oldLevel + " to " + newLevel);
                     }
                 }
