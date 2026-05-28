@@ -16,6 +16,8 @@ public class MapReader {
             }
         }
 
+        lines.removeIf(line -> line.isEmpty());
+
         int rows = lines.size();
         int cols = lines.get(0).length();
         Grid grid = new Grid(rows, cols);
