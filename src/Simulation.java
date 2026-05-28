@@ -58,18 +58,18 @@ public class Simulation {
                     String type = cell.getType();
 
                     if (type.equals("F")) {
-                        bfsSpreadService(r, c, type, 5);
+                        distributeServiceWithinRadius(r, c, type, 5);
                     } else if (type.equals("D")) {
-                        bfsSpreadService(r, c, type, 3);
+                        distributeServiceWithinRadius(r, c, type, 3);
                     } else if (type.equals("S")) {
-                        bfsSpreadService(r, c, type, 4);
+                        distributeServiceWithinRadius(r, c, type, 4);
                     }
                 }
             }
         }
     }
 
-    private void bfsSpreadService(int startRow, int startCol, String type, int maxRange) {
+    private void distributeServiceWithinRadius(int startRow, int startCol, String type, int maxRange) {
         for (int r = 0; r < grid.getRows(); r++) {
             for (int c = 0; c < grid.getCols(); c++) {
                 Cell cell = grid.getCell(r, c);
@@ -136,17 +136,15 @@ public class Simulation {
                     zone.computeOutput();
                     int output = zone.getCurrentOutput();
 
-                    if(output > 0){
-                        if (zone instanceof HousingZone) {
-                            totalPopulationPool += output;
-                            System.out.println("House at (" + r + "," + c + ") generated " + output + " population");
-                        } else if (zone instanceof IndustrialZone) {
-                            totalGoodsPool += output;
-                            System.out.println("Industrial at (" + r + "," + c + ") generated " + output + " goods");
-                        } else if (zone instanceof CommercialZone) {
-                            totalLifestylePool += output;
-                            System.out.println("Commercial at (" + r + "," + c + ") generated " + output + " lifestyle");
-                        }
+                    if (zone instanceof HousingZone) {
+                        totalPopulationPool += output;
+                        System.out.println("House at (" + r + "," + c + ") generated " + output + " population");
+                    } else if (zone instanceof IndustrialZone) {
+                        totalGoodsPool += output;
+                        System.out.println("Industrial at (" + r + "," + c + ") generated " + output + " goods");
+                    } else if (zone instanceof CommercialZone) {
+                        totalLifestylePool += output;
+                        System.out.println("Commercial at (" + r + "," + c + ") generated " + output + " lifestyle");
                     }
                 }
             }
