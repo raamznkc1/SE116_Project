@@ -5,27 +5,16 @@ import java.util.Queue;
 
         public void distribute(Grid grid, UtilityProvider provider) {
 
-            for (int row = 0; row < grid.getRows(); row++) {
-                for (int col = 0; col < grid.getCols(); col++) {
-
-                    Cell cell = grid.getCell(row, col);
-
-                    if (cell instanceof Zone) {
-                        Zone zone = (Zone) cell;
-                        zone.updateDemand();
-                    }
-                }
-            }
-
             boolean[][] visited = new boolean[grid.getRows()][grid.getCols()];
             Queue<int[]> queue = new LinkedList<>();
 
             int providerRow = provider.getRow();
             int providerCol = provider.getCol();
-            int remainingUtility = provider.getCapacity();
+            int remainingCapacity = provider.getCapacity();
+            String utilityType = provider.getUtilityType();
 
 
-            queue.add(new int[]{providerRow, providerCol, remainingUtility});
+            queue.add(new int[]{providerRow, providerCol});
             visited[providerRow][providerCol] = true;
 
             int[][] directions = {
@@ -35,50 +24,46 @@ import java.util.Queue;
                     {0, 1}
             };
 
-            while (!queue.isEmpty()) {
+            while (!queue.isEmpty() && remainingCapacity > 0) {
                 int[] current = queue.remove();
 
                 int currentRow = current[0];
                 int currentCol = current[1];
-                int remaining = current[2];
 
                 for (int[] direction : directions) {
                     int nextRow = currentRow + direction[0];
                     int nextCol = currentCol + direction[1];
 
-                    if (nextRow < 0 || nextRow >= grid.getRows()){
-                        continue;
-                    }
-                    if (nextCol < 0 || nextCol >= grid.getCols()){
-                        continue;
-                    }
-                    if (visited[nextRow][nextCol]){
-                        continue;
-                    }
+                    if (grid.isValidPosition(nextRow, nextCol) && !visited[nextRow][nextCol]) {
+                        Cell cell = grid.getCell(nextRow, nextCol);
 
-                    Cell cell = grid.getCell(nextRow, nextCol);
+                        if (cell != null && cell.isConnectable()) {
+                            visited[nextRow][nextCol] = true;
 
-                    if (!cell.isConnectable()){
-                        continue;
-                    }
+                            if (cell instanceof Zone) {
+                                Zone zone = (Zone) cell;
+                                int demand = zone.getUtilityDemand();
 
-                    visited[nextRow][nextCol] = true;
+                                int currentReceived = utilityType.equals("Electricity") ? zone.getReceivedElectricity() :
+                                        utilityType.equals("Water") ? zone.getReceivedWater() : zone.getReceivedInternet();
 
-                    int newRemaining = remaining;
+                                int needed = demand - currentReceived;
 
-                    if (cell instanceof Zone) {
-                        Zone zone = (Zone) cell;
+                                if (needed > 0 && remainingCapacity > 0) {
+                                    int delivered = Math.min(needed, remainingCapacity);
 
-                        int demand = zone.getUtilityDemand();
-                        int given = Math.min(newRemaining, demand);
 
-                        provider.applyUtility(zone, given);
+                                    provider.applyUtility(zone, delivered);
 
-                        newRemaining -= given;
-                    }
+                                    remainingCapacity -= delivered;
 
-                    if (newRemaining > 0) {
-                        queue.add(new int[]{nextRow, nextCol, newRemaining});
+                                    String zoneName = (zone instanceof HousingZone) ? "House" :
+                                            (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
+                                    System.out.println(zoneName + " at (" + nextRow + "," + nextCol + ") received " + delivered + " " + utilityType.toLowerCase());
+                                }
+                            }
+                            queue.add(new int[]{nextRow, nextCol});
+                        }
                     }
                 }
             }
