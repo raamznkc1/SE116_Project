@@ -1,5 +1,6 @@
 public abstract class Zone extends Cell {
 
+    // zone level constants
     public static final int MAX_LEVEL = 3;
     public static final int MIN_LEVEL = 0;
     public static final int MIN_UTILITY_DEMAND = 1;
@@ -138,22 +139,26 @@ public abstract class Zone extends Cell {
         return true;
     }
 
+    // increases level by one
     public void levelUp() {
         if (level < MAX_LEVEL) {
             level++;
         }
     }
 
+    // decreases level by one
     public void levelDown() {
         if (level > MIN_LEVEL) {
             level--;
         }
     }
 
+    // drops level to zero when utility is lost
     public void dropToZero() {
         level = 0;
     }
 
+    // resets all received values
     public void resetReceivedValues() {
         receivedElectricity = 0;
         receivedWater = 0;
@@ -166,6 +171,7 @@ public abstract class Zone extends Cell {
         receivedLifestyle = 0;
     }
 
+    // updates utility demand
     public void updateDemand() {
         utilityDemand = Math.max(MIN_UTILITY_DEMAND, currentOutput);
     }
