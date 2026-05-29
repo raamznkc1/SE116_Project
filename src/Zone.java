@@ -1,5 +1,9 @@
 public abstract class Zone extends Cell {
 
+    public static final int MAX_LEVEL = 3;
+    public static final int MIN_LEVEL = 0;
+    public static final int MIN_UTILITY_DEMAND = 1;
+
     protected int level;
     protected int currentOutput;
     protected int receivedElectricity;
@@ -135,13 +139,13 @@ public abstract class Zone extends Cell {
     }
 
     public void levelUp() {
-        if (level < 3) {
+        if (level < MAX_LEVEL) {
             level++;
         }
     }
 
     public void levelDown() {
-        if (level > 0) {
+        if (level > MIN_LEVEL) {
             level--;
         }
     }
@@ -163,6 +167,6 @@ public abstract class Zone extends Cell {
     }
 
     public void updateDemand() {
-        utilityDemand = Math.max(1, currentOutput);
+        utilityDemand = Math.max(MIN_UTILITY_DEMAND, currentOutput);
     }
 }
