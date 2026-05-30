@@ -1,10 +1,12 @@
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Locale;
 
     public class UtilityDistributor {
 
         public void distribute(Grid grid, UtilityProvider provider) {
 
+            // Keeps track of visited cells to avoid checking the same cell again.
             boolean[][] visited = new boolean[grid.getRows()][grid.getCols()];
             Queue<int[]> queue = new LinkedList<>();
 
@@ -13,10 +15,12 @@ import java.util.Queue;
             int remainingCapacity = provider.getCapacity();
             String utilityType = provider.getUtilityType();
 
-
-            queue.add(new int[]{providerRow, providerCol});
+            // Starts BFS from the utility provider's position.
+            int[] providerPosition = {providerRow, providerCol};
+            queue.add(providerPosition);
             visited[providerRow][providerCol] = true;
 
+            // There are four movement directions possible: up, down, left, and right.
             int[][] directions = {
                     {-1, 0},
                     {1, 0},
@@ -24,6 +28,7 @@ import java.util.Queue;
                     {0, 1}
             };
 
+            // Uses BFS to distribute utility through connected cells while capacity is available.
             while (!queue.isEmpty() && remainingCapacity > 0) {
                 int[] current = queue.remove();
 
@@ -44,25 +49,42 @@ import java.util.Queue;
                                 Zone zone = (Zone) cell;
                                 int demand = zone.getUtilityDemand();
 
-                                int currentReceived = utilityType.equals("Electricity") ? zone.getReceivedElectricity() :
-                                        utilityType.equals("Water") ? zone.getReceivedWater() : zone.getReceivedInternet();
+                                int currentReceived = 0;
+
+                                if (utilityType.equals("Electricity")) {
+                                    currentReceived = zone.getReceivedElectricity();
+                                }
+                                else if (utilityType.equals("Water")) {
+                                    currentReceived = zone.getReceivedWater();
+                                }
+                                else {
+                                    currentReceived = zone.getReceivedInternet();
+                                }
 
                                 int needed = demand - currentReceived;
 
                                 if (needed > 0 && remainingCapacity > 0) {
                                     int delivered = Math.min(needed, remainingCapacity);
 
-
                                     provider.applyUtility(zone, delivered);
 
                                     remainingCapacity -= delivered;
 
-                                    String zoneName = (zone instanceof HousingZone) ? "House" :
-                                            (zone instanceof CommercialZone) ? "Commercial" : "Industrial";
-                                    System.out.println(zoneName + " at (" + nextRow + "," + nextCol + ") received " + delivered + " " + utilityType.toLowerCase(java.util.Locale.ENGLISH));
+                                    String zoneName;
+                                    if (zone instanceof HousingZone) {
+                                        zoneName = "House";
+                                    }
+                                    else if (zone instanceof CommercialZone) {
+                                        zoneName = "Commercial";
+                                    }
+                                    else {
+                                        zoneName = "Industrial";
+                                    }
+                                    System.out.println(zoneName + " at (" + nextRow + "," + nextCol + ") received " + delivered + " " + utilityType.toLowerCase(Locale.ENGLISH));
                                 }
                             }
-                            queue.add(new int[]{nextRow, nextCol});
+                            int[] nextPosition = {nextRow, nextCol};
+                            queue.add(nextPosition);
                         }
                     }
                 }

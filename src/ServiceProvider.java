@@ -15,8 +15,10 @@ public abstract class ServiceProvider extends Cell {
         return true;
     }
 
+    // Updates the service status of the given zone to true.
     public abstract void applyService(Zone zone);
 
+    // Distributes the service to all zones within the provider's radius.
     public void distribute(Grid grid) {
     for(int i=0;i<grid.getRows();i++){
         for(int j=0;j<grid.getCols();j++){

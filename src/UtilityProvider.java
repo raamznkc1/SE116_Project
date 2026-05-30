@@ -16,5 +16,6 @@ public abstract class  UtilityProvider extends Cell {
         return utilityType;
     }
 
-    public abstract void applyUtility(Zone zone, int amount);
+    //Applies provider's utility type to the given zone by the specified amount.
+    public abstract void applyUtility(Zone zone, int amount); //
 }
