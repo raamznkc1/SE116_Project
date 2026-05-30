@@ -155,7 +155,7 @@ public abstract class Zone extends Cell {
 
     // drops level to zero when utility is lost
     public void dropToZero() {
-        level = 0;
+        level = MIN_LEVEL;
     }
 
     // resets all received values
