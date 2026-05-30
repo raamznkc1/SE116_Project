@@ -95,13 +95,13 @@ public class Simulation {
                             }
 
                         } else if (type.equals("D")) {
-                            if (!zone.getHasHealth()) {
+                            if (zone instanceof HousingZone && !zone.getHasHealth()) {
                                 zone.setHasHealth(true);
                                 System.out.println(zoneName + " at (" + r + "," + c + ") received health service");
                             }
 
                         } else if (type.equals("S")) {
-                            if (!zone.getHasEducation()) {
+                            if (zone instanceof  HousingZone && !zone.getHasEducation()) {
                                 zone.setHasEducation(true);
                                 System.out.println(zoneName + " at (" + r + "," + c + ") received education service");
                             }
