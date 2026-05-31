@@ -34,8 +34,8 @@ public class Simulation {
             distributeResources();
         }
 
-        collectProduction();
         updateZones();
+        collectProduction();
         currentTick++;
     }
 
